@@ -785,6 +785,24 @@ function key_marker_to_cont_tok(key_marker, objects_arr, is_truncated) {
     return Buffer.from(j).toString('base64');
 }
 
+/**
+ * invalid_schema_to_aws_error handles specific AWS error responses related to invalid schema or parameters
+ * If the error's `rpc_code` is either `INVALID_SCHEMA` or `INVALID_SCHEMA_PARAMS`,
+ * the function throws a `MalformedPolicy` error. Otherwise, it throws the original error.
+ *
+ * @param {Object} error - The error object to handle
+ * @throws {Error|S3Error} - Throws an appropriate error based on the input
+ */
+function invalid_schema_to_aws_error(error) {
+    if (!error) {
+        throw new Error("Invalid error object: Error is undefined or null.");
+    }
+    if (["INVALID_SCHEMA", "INVALID_SCHEMA_PARAMS"].includes(error.rpc_code)) {
+        throw new S3Error(S3Error.MalformedPolicy);
+    }
+    throw error;
+}
+
 exports.STORAGE_CLASS_STANDARD = STORAGE_CLASS_STANDARD;
 exports.STORAGE_CLASS_GLACIER = STORAGE_CLASS_GLACIER;
 exports.STORAGE_CLASS_GLACIER_IR = STORAGE_CLASS_GLACIER_IR;
@@ -827,6 +845,7 @@ exports.get_default_object_owner = get_default_object_owner;
 exports.set_response_supported_storage_classes = set_response_supported_storage_classes;
 exports.cont_tok_to_key_marker = cont_tok_to_key_marker;
 exports.key_marker_to_cont_tok = key_marker_to_cont_tok;
+exports.invalid_schema_to_aws_error = invalid_schema_to_aws_error;
 exports.parse_sse_c = parse_sse_c;
 exports.OBJECT_ATTRIBUTES = OBJECT_ATTRIBUTES;
 exports.OBJECT_ATTRIBUTES_UNSUPPORTED = OBJECT_ATTRIBUTES_UNSUPPORTED;

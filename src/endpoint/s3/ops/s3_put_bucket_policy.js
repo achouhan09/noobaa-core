@@ -2,6 +2,7 @@
 'use strict';
 
 const S3Error = require('../s3_errors').S3Error;
+const s3_utils = require('../s3_utils');
 
 /**
  * http://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketPUTpolicy.html
@@ -17,12 +18,7 @@ async function put_bucket_policy(req) {
     try {
         await req.object_sdk.put_bucket_policy({ name: req.params.bucket, policy });
     } catch (error) {
-        let err = error;
-        if (error.rpc_code === "INVALID_SCHEMA" || error.rpc_code === "INVALID_SCHEMA_PARAMS") {
-            err = new S3Error(S3Error.MalformedPolicy);
-            err.message = "Policy was not well formed or did not validate against the published schema";
-        }
-        throw err;
+        s3_utils.invalid_schema_to_aws_error(error);
     }
 }
 

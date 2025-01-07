@@ -3,6 +3,7 @@
 
 const _ = require('lodash');
 const s3_const = require('../s3_constants');
+const s3_utils = require('../s3_utils');
 const { v4: uuid } = require('uuid');
 const dbg = require('../../../util/debug_module')(__filename);
 const S3Error = require('../s3_errors').S3Error;
@@ -108,9 +109,10 @@ async function put_bucket_lifecycle(req) {
         }
         id_set.add(current_rule.id);
 
-        if (rule.Status?.length !== 1) {
-            dbg.error('Rule should have status', rule);
-            throw new S3Error(S3Error.InvalidArgument);
+        if (!rule.Status || rule.Status.length !== 1 ||
+            (rule.Status[0] !== s3_const.LIFECYCLE_STATUS.STAT_ENABLED && rule.Status[0] !== s3_const.LIFECYCLE_STATUS.STAT_DISABLED)) {
+            dbg.error(`Rule should have a status value of "${s3_const.LIFECYCLE_STATUS.STAT_ENABLED}" or "${s3_const.LIFECYCLE_STATUS.STAT_DISABLED}".`, rule);
+            throw new S3Error(S3Error.MalformedXML);
         }
         current_rule.status = rule.Status[0];
 
@@ -171,10 +173,14 @@ async function put_bucket_lifecycle(req) {
         return current_rule;
     });
 
-    await req.object_sdk.set_bucket_lifecycle_configuration_rules({
-        name: req.params.bucket,
-        rules: lifecycle_rules
-    });
+    try {
+        await req.object_sdk.set_bucket_lifecycle_configuration_rules({
+            name: req.params.bucket,
+            rules: lifecycle_rules
+        });
+    } catch (error) {
+        s3_utils.invalid_schema_to_aws_error(error);
+    }
 
     dbg.log0('set_bucket_lifecycle', lifecycle_rules);
 }
