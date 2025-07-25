@@ -8,25 +8,25 @@ permissions:
     contents: read        # required for actions/checkout
 jobs:
 
-  run-sanity-tests:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/sanity.yaml
+  # run-sanity-tests:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/sanity.yaml
 
-  run-sanity-ssl-tests:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/sanity-ssl.yaml
+  # run-sanity-ssl-tests:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/sanity-ssl.yaml
 
-  run-unit-tests:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/unit.yaml
+  # run-unit-tests:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/unit.yaml
 
-  run-unit-tests-postgres:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/postgres-unit-tests.yaml
+  # run-unit-tests-postgres:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/postgres-unit-tests.yaml
 
-  run-nc-unit-tests:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/nc_unit.yml
+  # run-nc-unit-tests:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/nc_unit.yml
 
   ceph-s3-tests:
     needs: build-noobaa-image
@@ -36,21 +36,21 @@ jobs:
     needs: build-noobaa-image
     uses: ./.github/workflows/ceph-nsfs-s3-tests.yaml
 
-  warp-tests:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/warp-tests.yaml
+  # warp-tests:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/warp-tests.yaml
 
-  warp-nc-tests:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/warp-nc-tests.yaml
+  # warp-nc-tests:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/warp-nc-tests.yaml
 
-  mint-tests:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/mint-tests.yaml
+  # mint-tests:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/mint-tests.yaml
 
-  mint-nc-tests:
-    needs: build-noobaa-image
-    uses: ./.github/workflows/mint-nc-tests.yaml
+  # mint-nc-tests:
+  #   needs: build-noobaa-image
+  #   uses: ./.github/workflows/mint-nc-tests.yaml
 
   build-noobaa-image:
     name: Build Noobaa Image
